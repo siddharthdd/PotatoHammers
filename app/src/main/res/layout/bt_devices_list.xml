@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <ImageView
+        android:id="@+id/device_type_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+        android:id="@+id/name_of_device_textview"
+        style="@style/TextView_ofList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@id/device_type_icon"
+        tools:text="Name of the Device"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="20dp"/>
+    <TextView
+        android:id="@+id/Mac_id_textview"
+        style="@style/SubTextView_ofList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        tools:text="MAC_ID"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@id/name_of_device_textview"
+        app:layout_constraintTop_toBottomOf="@+id/name_of_device_textview"/>
+
+    <TextView
+        style="@style/SubTextView_ofList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:singleLine="true"
+        android:gravity="center"
+        android:text="_______________________________________________________________________________"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/Mac_id_textview"
+        app:layout_constraintTop_toBottomOf="@id/Mac_id_textview" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context=".Fragments.Bluetooth_devices_frag">
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="24sp"
+    android:layout_marginTop="5dp"
+    android:layout_marginStart="05dp"
+    android:text="Paired Devices"
+    style="@style/TextView_ofList"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/SubTextView_ofList"
+            android:text="________________________________________________________________________________________________________"
+            android:singleLine="true"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_deviceslist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:layout_marginTop="50dp"
+            android:layout_marginStart="05dp"
+            android:text="Available Devices"
+            style="@style/TextView_ofList"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/SubTextView_ofList"
+            android:text="________________________________________________________________________________________________________"
+            android:singleLine="true"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_deviceslist1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    </ScrollView>
+</FrameLayout>
