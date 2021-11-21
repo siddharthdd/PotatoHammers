@@ -5,6 +5,12 @@
     android:layout_height="match_parent"
 
     tools:context=".Fragments.Bluetooth_devices_frag">
+    <ProgressBar
+        android:id="@+id/scan_dev_progress"
+        android:visibility="gone"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center_horizontal"/>
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">

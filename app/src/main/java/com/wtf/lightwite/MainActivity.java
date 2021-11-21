@@ -1,30 +1,37 @@
 package com.wtf.lightwite;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.wtf.lightwite.Fragments.Bluetooth_devices_frag;
+
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 double tempreature;
@@ -35,6 +42,8 @@ BluetoothAdapter bluetoothAdapter;
 CardView fragmentContainerView;
 private int REQUEST_FINE_LOCATION_PERMSN = 101;
 boolean isFragmentActive =false;
+Set<BluetoothDevice> newDevices;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +56,6 @@ boolean isFragmentActive =false;
         fragmentContainerView = findViewById(R.id.fragment_container_view_tag);
         fragmentContainerView.setVisibility(View.GONE);
         SwitchInitialise();
-        initBt();
     }
     void checkPermissions(){
         if(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
@@ -118,14 +126,19 @@ boolean isFragmentActive =false;
         }
     }
 
-
     private void showFrag() {
+        initBt();
         Bluetooth_devices_frag bluetooth_devices_frag = new Bluetooth_devices_frag();
         fragmentContainerView.setVisibility(View.VISIBLE);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container_view_tag,bluetooth_devices_frag);
         fragmentTransaction.commit();
+        Log.e(TAG, "showFrag: FRAG SHOWED" );
         isFragmentActive=true;
+        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE){
+        startActivity(new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE)
+                .putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,300));
+    }
 
     }
 
@@ -200,4 +213,26 @@ boolean isFragmentActive =false;
         fragmentContainerView.setVisibility(View.GONE);
         isFragmentActive=false;
         }}
+
+    private BroadcastReceiver btDevListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+             if(BluetoothDevice.ACTION_FOUND.equals(action)){
+                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+             if(device.getBondState()!=BluetoothDevice.BOND_BONDED)
+             newDevices.add(device);
+             }
+             else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
+
+                if(newDevices.size()==0){
+                    Toast.makeText(context, "No new device Found", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(context, "Click on the device to Chat", Toast.LENGTH_SHORT).show();
+                 }
+            }
+
+        }
+    };
 }
