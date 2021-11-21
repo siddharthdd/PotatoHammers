@@ -3,6 +3,7 @@ package com.wtf.lightwite;
 import static android.content.ContentValues.TAG;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -34,7 +35,6 @@ import com.wtf.lightwite.Fragments.Bluetooth_devices_frag;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
-double tempreature;
 TextView tempreature_disp;
 SwitchMaterial fan_switch,bulb1_switch,bulb2_switch;
 Context context;
@@ -42,24 +42,69 @@ BluetoothAdapter bluetoothAdapter;
 CardView fragmentContainerView;
 private int REQUEST_FINE_LOCATION_PERMSN = 101;
 boolean isFragmentActive =false;
-Set<BluetoothDevice> newDevices;
+public  int RESULT_DEVICE_SCAN=102;
+boolean connectedtoBt = false;
+BluetoothDevice connectedDev ;
+Intent it;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context =this;
-        tempreature_disp = findViewById(R.id.switch1);
-        fan_switch = findViewById(R.id.switch2);
-        bulb1_switch = findViewById(R.id.switch5);
-        bulb2_switch = findViewById(R.id.switch6);
-        fragmentContainerView = findViewById(R.id.fragment_container_view_tag);
-        fragmentContainerView.setVisibility(View.GONE);
-        SwitchInitialise();
+        initialiseUI();
     }
-    void checkPermissions(){
-        if(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_FINE_LOCATION_PERMSN);}
+
+    @Override
+    public void onBackPressed() {
+        if(!isFragmentActive){
+            new AlertDialog.Builder(context)
+                    .setIcon(R.drawable.ic_baseline_close)
+                    .setTitle("Close The App")
+                    .setMessage("Are You Sure You Want to Exit The App?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            Toast.makeText(context, "App Closing Cancelled", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .show();
+
+        }
+        else{
+            fragmentContainerView.setVisibility(View.GONE);
+            isFragmentActive=false;
+        }}
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main_activity,menu);
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_bluetooth:
+                Toast.makeText(context, "Clicked bluetooth button", Toast.LENGTH_SHORT).show();
+                initBt();
+                return true;
+            case R.id.menu_search_devices:
+                checkPermissions();
+                Toast.makeText(context, "Clicked Search button", Toast.LENGTH_SHORT).show();
+                showFrag();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -90,6 +135,33 @@ Set<BluetoothDevice> newDevices;
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    void initialiseUI(){
+        tempreature_disp = findViewById(R.id.switch1);
+        fan_switch = findViewById(R.id.switch2);
+        bulb1_switch = findViewById(R.id.switch5);
+        bulb2_switch = findViewById(R.id.switch6);
+        fragmentContainerView = findViewById(R.id.fragment_container_view_tag);
+        fragmentContainerView.setVisibility(View.GONE);
+        SwitchInitialise();
+        it = getIntent();
+        intentExist();
+    }
+
+    private void intentExist() {
+        if(it!=null){
+       connectedDev =  it.getParcelableExtra("BlueTooth_Device");
+       if(connectedDev!=null){
+           connectedtoBt = true;
+           Log.e("Connected to Device ",connectedDev.getName());
+       }
+       }
+    }
+
+    void checkPermissions(){
+//        if(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+//            ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_FINE_LOCATION_PERMSN);}
+    }
+
     void initBt(){
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothAdapter == null){
@@ -99,30 +171,6 @@ Set<BluetoothDevice> newDevices;
             if(bluetoothAdapter.isEnabled()) {Toast.makeText(context, "Bluetooth Already Enabled", Toast.LENGTH_SHORT).show();
             }
             else bluetoothAdapter.enable();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main_activity,menu);
-        return super.onCreateOptionsMenu(menu);
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.menu_bluetooth:
-                Toast.makeText(context, "Clicked bluetooth button", Toast.LENGTH_SHORT).show();
-                initBt();
-                return true;
-            case R.id.menu_search_devices:
-                checkPermissions();
-                Toast.makeText(context, "Clicked Search button", Toast.LENGTH_SHORT).show();
-                showFrag();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -137,7 +185,7 @@ Set<BluetoothDevice> newDevices;
         isFragmentActive=true;
         if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE){
         startActivity(new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE)
-                .putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,300));
+                .putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,700));
     }
 
     }
@@ -186,53 +234,4 @@ Set<BluetoothDevice> newDevices;
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        if(!isFragmentActive){
-            new AlertDialog.Builder(context)
-                    .setIcon(R.drawable.ic_baseline_close)
-                    .setTitle("Close The App")
-                    .setMessage("Are You Sure You Want to Exit The App?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            Toast.makeText(context, "App Closing Cancelled", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .show();
-
-        }
-    else{
-        fragmentContainerView.setVisibility(View.GONE);
-        isFragmentActive=false;
-        }}
-
-    private BroadcastReceiver btDevListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-             if(BluetoothDevice.ACTION_FOUND.equals(action)){
-                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-             if(device.getBondState()!=BluetoothDevice.BOND_BONDED)
-             newDevices.add(device);
-             }
-             else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
-
-                if(newDevices.size()==0){
-                    Toast.makeText(context, "No new device Found", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(context, "Click on the device to Chat", Toast.LENGTH_SHORT).show();
-                 }
-            }
-
-        }
-    };
 }

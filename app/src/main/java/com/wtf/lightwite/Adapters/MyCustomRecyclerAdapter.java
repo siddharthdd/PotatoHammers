@@ -25,10 +25,12 @@ public class MyCustomRecyclerAdapter extends RecyclerView.Adapter<MyCustomRecycl
     ImageView icon;
     TextView nameofDevice;
     TextView macAddress;
+    OnPairedListener mOnPairedListener;
 
-    public MyCustomRecyclerAdapter(Set<BluetoothDevice> list,Context context){
+    public MyCustomRecyclerAdapter(Set<BluetoothDevice> list,Context context,OnPairedListener mOnPairedListener){
         this.list = list;
         this.context = context;
+        this.mOnPairedListener = mOnPairedListener;
     }
 
     @NonNull
@@ -36,7 +38,7 @@ public class MyCustomRecyclerAdapter extends RecyclerView.Adapter<MyCustomRecycl
     public viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.bt_devices_list,parent,false);
         list = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
-        return new viewHolder(view);
+        return new viewHolder(view,mOnPairedListener);
     }
 
     @Override
@@ -47,12 +49,14 @@ public class MyCustomRecyclerAdapter extends RecyclerView.Adapter<MyCustomRecycl
         //Set the Text and Shit
         int Btclass = device.getBluetoothClass().getDeviceClass();
         if(Btclass== BluetoothClass.Device.AUDIO_VIDEO_HEADPHONES || Btclass == BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET){
-            icon.setImageResource(android.R.drawable.checkbox_on_background);
+            icon.setImageResource(android.R.drawable.stat_sys_headset);
         }
         else if(Btclass == BluetoothClass.Device.PHONE_SMART || Btclass == BluetoothClass.Device.PHONE_UNCATEGORIZED)
-            icon.setImageResource(android.R.drawable.checkbox_on_background);
-        else {
+            icon.setImageResource(android.R.drawable.stat_sys_vp_phone_call);
+        else if(Btclass == BluetoothClass.Device.COMPUTER_DESKTOP || Btclass == BluetoothClass.Device.COMPUTER_LAPTOP || Btclass == BluetoothClass.Device.COMPUTER_SERVER)
             icon.setImageResource(android.R.drawable.checkbox_off_background);
+        else {
+            icon.setImageResource(android.R.drawable.checkbox_on_background);
         }
 
     }
@@ -62,13 +66,24 @@ public class MyCustomRecyclerAdapter extends RecyclerView.Adapter<MyCustomRecycl
         return list.size();
     }
 
-    class viewHolder extends  RecyclerView.ViewHolder{
-
-        public viewHolder(@NonNull View itemView) {
+    class viewHolder extends  RecyclerView.ViewHolder implements  View.OnClickListener{
+        MyCustomRecyclerAdapter.OnPairedListener onPairedListener;
+        public viewHolder(@NonNull View itemView, MyCustomRecyclerAdapter.OnPairedListener onPairedListener) {
             super(itemView);
-        icon = itemView.findViewById(R.id.device_type_icon);
-        nameofDevice = itemView.findViewById(R.id.name_of_device_textview);
-        macAddress = itemView.findViewById(R.id.Mac_id_textview);
+            icon = itemView.findViewById(R.id.device_type_icon);
+            nameofDevice = itemView.findViewById(R.id.name_of_device_textview);
+            macAddress = itemView.findViewById(R.id.Mac_id_textview);
+            this.onPairedListener = onPairedListener;
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            btList =  new ArrayList<BluetoothDevice>(list);
+            onPairedListener.onPairedClick(getAdapterPosition(),btList.get(getAdapterPosition()));
+        }
+    }
+    public interface OnPairedListener{
+        void onPairedClick(int position,BluetoothDevice bt);
     }
 }
