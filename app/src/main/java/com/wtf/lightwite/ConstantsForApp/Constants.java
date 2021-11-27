@@ -8,7 +8,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 public class Constants {
-    public static String UUID_STRING = "JAVA_MINI_PROJECT";
+    public static String UUID_STRING = "00001101-0000-1000-8000-00805F9B34FB";
     public static final int STATE_DISCOVERING = 0;
     public static final int STATE_CONNECTING = 1;
     public static final int STATE_CONNECTION_FAILED = 2;
