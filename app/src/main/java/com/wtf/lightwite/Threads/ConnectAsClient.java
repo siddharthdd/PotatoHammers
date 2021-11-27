@@ -25,7 +25,6 @@ public class ConnectAsClient extends Thread {
         this.device = device;
         try {
             socket = device.createRfcommSocketToServiceRecord(UUID.fromString(Constants.UUID_STRING));
-//            socket = device.createRfcommSocketToServiceRecord(UUID.randomUUID());
         } catch (IOException e) {
             e.printStackTrace();
         }

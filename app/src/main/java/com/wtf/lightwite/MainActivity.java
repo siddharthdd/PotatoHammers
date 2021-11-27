@@ -9,6 +9,7 @@ import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_DISCOVERING;
 import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_MESSAGE_RECIVED;
 
 import android.Manifest;
+import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -84,6 +85,7 @@ static BluetoothSocket btSocket;
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
+                            onDestroy();
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -219,6 +221,7 @@ static BluetoothSocket btSocket;
             @Override
             public void onClick(View v) {
                 if(btSocket!=null){
+                    receiveBluetooth = new ReceiveBluetooth(btSocket);
                 receiveBluetooth.write("T".getBytes());
                 receiveBluetooth.start();}
             }
@@ -326,9 +329,14 @@ static BluetoothSocket btSocket;
                 //G and thumbvlue
                 if(btSocket!=null){
                     receiveBluetooth.write("G".getBytes());
-                    receiveBluetooth.write(ByteBuffer.allocate(4).putFloat(value).array());}
+                    receiveBluetooth.write(floatToByteArray(value));}
             }
         });
+    }
+    public static byte[] floatToByteArray(float value) {
+        int intBits =  Float.floatToIntBits(value);
+        return new byte[] {
+                (byte) (intBits >> 24), (byte) (intBits >> 16), (byte) (intBits >> 8), (byte) (intBits) };
     }
     public  static Handler handler = new Handler(new Handler.Callback() {
         @Override

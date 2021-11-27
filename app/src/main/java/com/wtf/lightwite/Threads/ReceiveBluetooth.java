@@ -11,6 +11,7 @@ import com.wtf.lightwite.MainActivity;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class ReceiveBluetooth extends Thread{
     BluetoothSocket socket;
@@ -45,7 +46,8 @@ public class ReceiveBluetooth extends Thread{
         public void write(byte[] data){
             try {
                 outputStream.write(data,0, data.length);
-                Log.e(LOGTAG,data.toString());
+                String str = new String(data, StandardCharsets.UTF_8);
+                Log.e(LOGTAG,str);
             } catch (IOException e) {
                 e.printStackTrace();
             }

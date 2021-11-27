@@ -134,9 +134,7 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
         }
         connectAsClient = new ConnectAsClient(bt);
         connectAsClient.start();
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        intent.putExtra("BlueTooth_Device",bt);
-        startActivity(intent);
+        getActivity().onBackPressed();
     }
 
     @Override
@@ -144,9 +142,7 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
         MainActivity.connectedtoBt = false;
         connectAsClient = new ConnectAsClient(bt);
         connectAsClient.start();
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        intent.putExtra("BlueTooth_Device",bt);
-        startActivity(intent);
+        getActivity().onBackPressed();
     }
 
     public boolean createBond(BluetoothDevice btDevice)
@@ -156,4 +152,6 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
         Boolean returnValue = (Boolean) createBondMethod.invoke(btDevice);
         return returnValue.booleanValue();
     }
+
+
 }
