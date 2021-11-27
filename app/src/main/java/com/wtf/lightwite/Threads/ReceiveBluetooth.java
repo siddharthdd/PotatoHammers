@@ -45,9 +45,16 @@ public class ReceiveBluetooth extends Thread{
             try {
                 outputStream.write(data,0, data.length);
                 Log.e(LOGTAG,data.toString());
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    // Call this method from the main activity to shut down the connection.
+    public void cancel() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            Log.e(LOGTAG, "Could not close the connect socket", e);
+        }
+    }
 }

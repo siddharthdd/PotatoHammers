@@ -22,10 +22,12 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -35,19 +37,27 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.slider.RangeSlider;
+import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.wtf.lightwite.Fragments.Bluetooth_devices_frag;
 import com.wtf.lightwite.Threads.ReceiveBluetooth;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends AppCompatActivity {
 TextView tempreature_disp;
+CardView tempreatureCardview;
     static TextView dev_status;
 SwitchMaterial fan_switch,bulb1_switch,bulb2_switch;
+ToggleButton tb1,tb2,tb3;
 Context context;
 BluetoothAdapter bluetoothAdapter;
 CardView fragmentContainerView;
+RangeSlider slider;
+MaterialButtonToggleGroup modeButton;
 private int REQUEST_FINE_LOCATION_PERMSN = 101;
 boolean isFragmentActive =false;
 public  int RESULT_DEVICE_SCAN=102;
@@ -152,8 +162,13 @@ static BluetoothSocket btSocket;
         fan_switch = findViewById(R.id.switch2);
         bulb1_switch = findViewById(R.id.switch5);
         bulb2_switch = findViewById(R.id.switch6);
+        modeButton = findViewById(R.id.switch4);
+        tempreatureCardview = findViewById(R.id.card1);
         fragmentContainerView = findViewById(R.id.fragment_container_view_tag);
         fragmentContainerView.setVisibility(View.GONE);
+        slider = findViewById(R.id.switch3);
+        slider.setValueFrom(0f);
+        slider.setValueTo(255f);
         SwitchInitialise();
         it = getIntent();
         intentExist();
@@ -204,14 +219,26 @@ static BluetoothSocket btSocket;
     }
 
     void SwitchInitialise(){
+        tempreatureCardview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                receiveBluetooth.write("G".getBytes());
+                receiveBluetooth.start();
+            }
+        });
         fan_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(fan_switch.isChecked()){
+                    //"C"
+                    if(btSocket!=null)
+                        receiveBluetooth.write("C".getBytes());
                     Toast.makeText(MainActivity.this, "Fan Switch ON", Toast.LENGTH_SHORT).show();
                 }
                 else if(!fan_switch.isChecked()){
-                    //When Fan Switch is Off
+                    //When Fan Switch is Off "c"
+                    if(btSocket!=null)
+                        receiveBluetooth.write("c".getBytes());
                     Toast.makeText(MainActivity.this, "Fan Switch OFF", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -220,11 +247,15 @@ static BluetoothSocket btSocket;
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(bulb1_switch.isChecked()){
-                    //When Bulb 1 is On
+                    //When Bulb 1 is On "B"
+                    if(btSocket!=null)
+                        receiveBluetooth.write("B".getBytes());
                     Toast.makeText(MainActivity.this, "Bulb 1 Switch ON", Toast.LENGTH_SHORT).show();
                 }
                 else if(!bulb1_switch.isChecked()){
-                    //When Bulb 1 is Off
+                    //When Bulb 1 is Off "b"
+                    if(btSocket!=null)
+                        receiveBluetooth.write("b".getBytes());
                     Toast.makeText(MainActivity.this, "Bulb 1 Switch OFF", Toast.LENGTH_SHORT).show();
 
                 }
@@ -234,14 +265,71 @@ static BluetoothSocket btSocket;
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(bulb2_switch.isChecked()){
-                    //When Bulb 2 is On
+                    //When Bulb 2 is On "z"
+                    if(btSocket!=null)
+                        receiveBluetooth.write("z".getBytes());
                     Toast.makeText(MainActivity.this, "Bulb 2 Switch ON", Toast.LENGTH_SHORT).show();
                 }
                 else if(!bulb2_switch.isChecked()){
-                    //When Bulb 2 is Off
+                    //When Bulb 2 is Off "a"
+                    if(btSocket!=null)
+                        receiveBluetooth.write("a".getBytes());
                     Toast.makeText(MainActivity.this, "Bulb 2 Switch OFF", Toast.LENGTH_SHORT).show();
 
                 }
+            }
+        });
+
+
+        modeButton.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
+            @Override
+            public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+                switch(checkedId){
+                case R.id.btn1:
+                    if(isChecked){
+//                    "D"
+                        if(btSocket!=null)
+                            receiveBluetooth.write("D".getBytes());
+                    }
+                    else{
+                        if(btSocket!=null)
+                            receiveBluetooth.write("d".getBytes());
+                    }
+                    break;
+                case R.id.btn2:
+                    if(isChecked){
+//                    "E"
+                        if(btSocket!=null)
+                            receiveBluetooth.write("E".getBytes());
+                    }
+                    else{
+                        if(btSocket!=null)
+                            receiveBluetooth.write("e".getBytes());
+                    }
+                    break;
+                case R.id.btn3:
+                    if(isChecked){
+//                    "H"
+                        if(btSocket!=null)
+                            receiveBluetooth.write("H".getBytes());
+                    }
+                    else{
+                        if(btSocket!=null)
+                            receiveBluetooth.write("h".getBytes());
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+        });
+        slider.addOnChangeListener(new RangeSlider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
+                //G and thumbvlue
+                if(btSocket!=null){
+                    receiveBluetooth.write("G".getBytes());
+                    receiveBluetooth.write(ByteBuffer.allocate(4).putFloat(value).array());}
             }
         });
     }
