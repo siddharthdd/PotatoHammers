@@ -9,28 +9,13 @@ import androidx.annotation.NonNull;
 
 public class Constants {
     public static String UUID_STRING = "00001101-0000-1000-8000-00805F9B34FB";
+    public static String LOGTAG = "App Debug";
     public static final int STATE_DISCOVERING = 0;
     public static final int STATE_CONNECTING = 1;
     public static final int STATE_CONNECTION_FAILED = 2;
     public static final int STATE_CONNECTED = 3;
     public static final int STATE_CLOSED = 4;
-    public  static Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(@NonNull Message msg) {
-            switch (msg.what){
-                case STATE_DISCOVERING:
-                    break;
-                case STATE_CONNECTING:
-                    break;
-                case STATE_CONNECTION_FAILED:
-                    break;
-                case STATE_CONNECTED:
-                    break;
-                case STATE_CLOSED:
-                    break;
-            }
-            return true;
-        }
-    });
+    public static final int STATE_MESSAGE_RECIVED = 5;
+
 
 }

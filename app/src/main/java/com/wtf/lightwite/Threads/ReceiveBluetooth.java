@@ -1,6 +1,12 @@
 package com.wtf.lightwite.Threads;
 
+import static com.wtf.lightwite.ConstantsForApp.Constants.LOGTAG;
+import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_MESSAGE_RECIVED;
+
 import android.bluetooth.BluetoothSocket;
+import android.util.Log;
+
+import com.wtf.lightwite.MainActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +18,7 @@ public class ReceiveBluetooth extends Thread{
     OutputStream outputStream;
     byte[] buffer;
     int bytes;
-    ReceiveBluetooth(BluetoothSocket socket){
+    public ReceiveBluetooth(BluetoothSocket socket){
         this.socket = socket;
         InputStream inpTemp = null;
         OutputStream outTemp = null;
@@ -30,6 +36,7 @@ public class ReceiveBluetooth extends Thread{
         while (true){
             try {
                 bytes = inputStream.read(buffer);
+                MainActivity.handler.obtainMessage(STATE_MESSAGE_RECIVED,bytes,0,buffer).sendToTarget();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -37,6 +44,8 @@ public class ReceiveBluetooth extends Thread{
         public void write(byte[] data){
             try {
                 outputStream.write(data,0, data.length);
+                Log.e(LOGTAG,data.toString());
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

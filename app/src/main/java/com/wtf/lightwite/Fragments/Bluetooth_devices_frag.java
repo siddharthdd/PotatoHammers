@@ -1,5 +1,7 @@
 package com.wtf.lightwite.Fragments;
 
+import static com.wtf.lightwite.ConstantsForApp.Constants.LOGTAG;
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -25,6 +27,7 @@ import com.wtf.lightwite.MainActivity;
 import com.wtf.lightwite.R;
 import com.wtf.lightwite.Threads.ConnectAsClient;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -63,9 +66,13 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
             String action = intent.getAction();
             if(BluetoothDevice.ACTION_FOUND.equals(action)){
                 BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                Log.e(LOGTAG,"new dev found "+device.getName());
                 if(device.getBondState()!=BluetoothDevice.BOND_BONDED){
-                    if(newDevices.contains(device)){}
+                    if(newDevices.contains(device)){
+                        Log.e(LOGTAG, "onReceive: New DEV");
+                    }
                     else{newDevices.add(device);
+                    adapterAvailableDevices.notifyDataSetChanged();
                     }
                 }
             }
@@ -86,7 +93,6 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
         recyclerViewPaired = view.findViewById(R.id.recycler_deviceslist);
         recyclerViewAvailable = view.findViewById(R.id.recycler_deviceslist1);
         progressScanDevices = view.findViewById(R.id.scan_dev_progress);
-        progressScanDevices.setVisibility(View.VISIBLE);
     }
     void initialiseFields(){
         newDevices = new ArrayList<BluetoothDevice>();
@@ -96,8 +102,8 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
         pairedAdapter = new MyCustomRecyclerAdapter(pairedList, this.getContext(),this);
     }
     private void setAdapterforPaired() {
-        recyclerViewPaired.setAdapter(pairedAdapter);
         recyclerViewPaired.setLayoutManager( new LinearLayoutManager(this.getContext()));
+        recyclerViewPaired.setAdapter(pairedAdapter);
     }
     private void broadcastRegister() {
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -111,22 +117,23 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
             bluetoothAdapter.cancelDiscovery();
         bluetoothAdapter.startDiscovery();
         progressScanDevices.setVisibility(View.VISIBLE);
-        if(bluetoothAdapter.isDiscovering())
-        bluetoothAdapter.cancelDiscovery();
-        bluetoothAdapter.startDiscovery();
         Toast.makeText(getContext(), "Scan Started", Toast.LENGTH_SHORT).show();
     }
     void scanDevFit(){
-    recyclerViewAvailable.setAdapter(adapterAvailableDevices);
     recyclerViewAvailable.setLayoutManager(new LinearLayoutManager(this.getContext()));
+    recyclerViewAvailable.setAdapter(adapterAvailableDevices);
 
 }
 
     @Override
     public void onNewClick(int position, BluetoothDevice bt) {
+        try {
+            boolean tempboll  = createBond(bt);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         connectAsClient = new ConnectAsClient(bt);
         connectAsClient.start();
-        while(connectAsClient.isAlive());
         Intent intent = new Intent(getContext(), MainActivity.class);
         intent.putExtra("BlueTooth_Device",bt);
         startActivity(intent);
@@ -134,9 +141,19 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
 
     @Override
     public void onPairedClick(int position,BluetoothDevice bt) {
-        Log.e("CLICK","U CLICKEDDD PAIRED "+bt.getAddress());
+        MainActivity.connectedtoBt = false;
+        connectAsClient = new ConnectAsClient(bt);
+        connectAsClient.start();
         Intent intent = new Intent(getContext(), MainActivity.class);
         intent.putExtra("BlueTooth_Device",bt);
         startActivity(intent);
+    }
+
+    public boolean createBond(BluetoothDevice btDevice)
+            throws Exception
+    { Class class1 = Class.forName("android.bluetooth.BluetoothDevice");
+        Method createBondMethod = class1.getMethod("createBond");
+        Boolean returnValue = (Boolean) createBondMethod.invoke(btDevice);
+        return returnValue.booleanValue();
     }
 }
