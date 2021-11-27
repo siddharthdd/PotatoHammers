@@ -23,6 +23,7 @@ import com.wtf.lightwite.Adapters.MyCustomRecyclerAdapter;
 import com.wtf.lightwite.Adapters.ScanDevsAdapter;
 import com.wtf.lightwite.MainActivity;
 import com.wtf.lightwite.R;
+import com.wtf.lightwite.Threads.ConnectAsClient;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -36,6 +37,7 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
     ArrayList<BluetoothDevice> newDevices;
     ScanDevsAdapter adapterAvailableDevices;
     public static int REQCODE_BTDEV = 1101;
+    ConnectAsClient connectAsClient;
 
     public Bluetooth_devices_frag() {
 
@@ -121,7 +123,10 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
 }
 
     @Override
-    public void onNoteClick(int position,BluetoothDevice bt) {
+    public void onNewClick(int position, BluetoothDevice bt) {
+        connectAsClient = new ConnectAsClient(bt);
+        connectAsClient.start();
+        while(connectAsClient.isAlive());
         Intent intent = new Intent(getContext(), MainActivity.class);
         intent.putExtra("BlueTooth_Device",bt);
         startActivity(intent);

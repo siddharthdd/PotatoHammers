@@ -73,11 +73,11 @@ public class ScanDevsAdapter extends RecyclerView.Adapter<ScanDevsAdapter.viewHo
 
         @Override
         public void onClick(View v) {
-        onNoteListener.onNoteClick(getAdapterPosition(),list.get(getAdapterPosition()));
+        onNoteListener.onNewClick(getAdapterPosition(),list.get(getAdapterPosition()));
         }
     }
     public interface OnNoteListener{
-        void onNoteClick(int position,BluetoothDevice bt);
+        void onNewClick(int position, BluetoothDevice bt);
 
     }
 }
