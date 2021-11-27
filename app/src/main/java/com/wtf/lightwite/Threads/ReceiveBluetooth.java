@@ -35,8 +35,9 @@ public class ReceiveBluetooth extends Thread{
         buffer = new byte[1024];
         while (true){
             try {
-                bytes = inputStream.read(buffer);
-                MainActivity.handler.obtainMessage(STATE_MESSAGE_RECIVED,bytes,0,buffer).sendToTarget();
+                bytes = inputStream.read(buffer,0,buffer.length);
+                MainActivity.handler.obtainMessage(STATE_MESSAGE_RECIVED,bytes,-1,buffer).sendToTarget();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

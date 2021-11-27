@@ -48,11 +48,10 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends AppCompatActivity {
-TextView tempreature_disp;
+static TextView tempreature_disp;
 CardView tempreatureCardview;
-    static TextView dev_status;
+static TextView dev_status;
 SwitchMaterial fan_switch,bulb1_switch,bulb2_switch;
-ToggleButton tb1,tb2,tb3;
 Context context;
 BluetoothAdapter bluetoothAdapter;
 CardView fragmentContainerView;
@@ -60,7 +59,6 @@ RangeSlider slider;
 MaterialButtonToggleGroup modeButton;
 private int REQUEST_FINE_LOCATION_PERMSN = 101;
 boolean isFragmentActive =false;
-public  int RESULT_DEVICE_SCAN=102;
 public static boolean connectedtoBt = false;
 static BluetoothDevice connectedDev ;
 Intent it;
@@ -114,8 +112,6 @@ static BluetoothSocket btSocket;
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_bluetooth:
-                if(connectedtoBt){}
-                Toast.makeText(context, "Clicked bluetooth button", Toast.LENGTH_SHORT).show();
                 initBt();
                 return true;
             case R.id.menu_search_devices:
@@ -222,8 +218,9 @@ static BluetoothSocket btSocket;
         tempreatureCardview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                receiveBluetooth.write("G".getBytes());
-                receiveBluetooth.start();
+                if(btSocket!=null){
+                receiveBluetooth.write("T".getBytes());
+                receiveBluetooth.start();}
             }
         });
         fan_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -361,7 +358,9 @@ static BluetoothSocket btSocket;
                 case STATE_CLOSED:
                     break;
                 case STATE_MESSAGE_RECIVED:
-                    messageRecived((byte[]) msg.obj);
+                    byte[] aa = new byte[msg.arg1];
+                    aa =(byte[]) msg.obj;
+                    messageRecived(aa);
                     break;
             }
             return true;
@@ -370,5 +369,7 @@ static BluetoothSocket btSocket;
 
     private static void messageRecived(byte[] data) {
         //task to do when message Recieved
+        tempreature_disp.setText(data.toString());
+
     }
 }
