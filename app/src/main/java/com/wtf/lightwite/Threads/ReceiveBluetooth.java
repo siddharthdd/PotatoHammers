@@ -33,15 +33,13 @@ public class ReceiveBluetooth extends Thread implements Constants {
     }    @Override
     public void run() {
         buffer = new byte[1024];
-        while (true){
             try {
                 bytes = inputStream.read(buffer,0,buffer.length);
                 MainActivity.handler.obtainMessage(STATE_MESSAGE_RECIVED,bytes,-1,buffer).sendToTarget();
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }    }
+           }
         public void write(byte[] data){
             try {
                 outputStream.write(data,0, data.length);
