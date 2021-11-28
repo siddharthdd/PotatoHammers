@@ -9,7 +9,6 @@ import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_DISCOVERING;
 import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_MESSAGE_RECIVED;
 
 import android.Manifest;
-import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -23,12 +22,10 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -40,12 +37,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.slider.RangeSlider;
-import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.wtf.lightwite.Fragments.Bluetooth_devices_frag;
 import com.wtf.lightwite.Threads.ReceiveBluetooth;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends AppCompatActivity {
@@ -168,18 +163,7 @@ static BluetoothSocket btSocket;
         slider.setValueFrom(0f);
         slider.setValueTo(255f);
         SwitchInitialise();
-        it = getIntent();
-        intentExist();
-    }
 
-    private void intentExist() {
-        if(it!=null){
-       connectedDev =  it.getParcelableExtra("BlueTooth_Device");
-       if(connectedDev!=null){
-           connectedtoBt = true;
-           Log.e(LOGTAG,"Device Clicked "+connectedDev.getName());
-       }
-       }
     }
 
     void checkPermissions(){
@@ -329,7 +313,8 @@ static BluetoothSocket btSocket;
                 //G and thumbvlue
                 if(btSocket!=null){
                     receiveBluetooth.write("G".getBytes());
-                    receiveBluetooth.write(floatToByteArray(value));}
+                    String str = String.valueOf(value);
+                    receiveBluetooth.write(str.getBytes(StandardCharsets.US_ASCII));}
             }
         });
     }
@@ -366,18 +351,10 @@ static BluetoothSocket btSocket;
                 case STATE_CLOSED:
                     break;
                 case STATE_MESSAGE_RECIVED:
-                    byte[] aa = new byte[msg.arg1];
-                    aa =(byte[]) msg.obj;
-                    messageRecived(aa);
+                    tempreature_disp.setText(new String((byte[]) msg.obj));
                     break;
             }
             return true;
         }
     });
-
-    private static void messageRecived(byte[] data) {
-        //task to do when message Recieved
-        tempreature_disp.setText(data.toString());
-
-    }
 }
