@@ -1,12 +1,5 @@
 package com.wtf.lightwite;
 
-import static com.wtf.lightwite.ConstantsForApp.Constants.LOGTAG;
-import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_CLOSED;
-import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_CONNECTED;
-import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_CONNECTING;
-import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_CONNECTION_FAILED;
-import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_DISCOVERING;
-import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_MESSAGE_RECIVED;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -38,12 +31,13 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.slider.RangeSlider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.wtf.lightwite.ConstantsForApp.Constants;
 import com.wtf.lightwite.Fragments.Bluetooth_devices_frag;
 import com.wtf.lightwite.Threads.ReceiveBluetooth;
 
 import java.nio.charset.StandardCharsets;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Constants {
 static TextView tempreature_disp;
 CardView tempreatureCardview;
 static TextView dev_status;
@@ -53,7 +47,7 @@ BluetoothAdapter bluetoothAdapter;
 CardView fragmentContainerView;
 RangeSlider slider;
 MaterialButtonToggleGroup modeButton;
-private int REQUEST_FINE_LOCATION_PERMSN = 101;
+private final int REQUEST_FINE_LOCATION_PERMSN = 101;
 boolean isFragmentActive =false;
 public static boolean connectedtoBt = false;
 static BluetoothDevice connectedDev ;
@@ -205,9 +199,9 @@ static BluetoothSocket btSocket;
             @Override
             public void onClick(View v) {
                 if(btSocket!=null){
-                    receiveBluetooth = new ReceiveBluetooth(btSocket);
+                    ReceiveBluetooth rec = new ReceiveBluetooth(btSocket);
                 receiveBluetooth.write("T".getBytes());
-                receiveBluetooth.start();}
+                rec.start();}
             }
         });
         fan_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -331,6 +325,8 @@ static BluetoothSocket btSocket;
                 case STATE_DISCOVERING:
                     break;
                 case STATE_CONNECTING:
+                    if(btSocket!=null) {receiveBluetooth.cancel();
+                    btSocket=null;}
                     btdev = (BluetoothDevice) msg.obj;
                     dev_status.setText("Connecting to "+btdev.getName());
                     connectedDev = btdev;
@@ -339,6 +335,8 @@ static BluetoothSocket btSocket;
                     btdev = (BluetoothDevice) msg.obj;
                     dev_status.setText("Couldn't Connect to  "+btdev.getName());
                     connectedDev = null;
+                    if(btSocket!=null) {receiveBluetooth.cancel();
+                        btSocket=null;}
                     break;
                 case STATE_CONNECTED:
                     BluetoothSocket socket = (BluetoothSocket) msg.obj;

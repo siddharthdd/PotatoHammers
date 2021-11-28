@@ -1,7 +1,5 @@
 package com.wtf.lightwite.Fragments;
 
-import static com.wtf.lightwite.ConstantsForApp.Constants.LOGTAG;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -16,13 +14,13 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wtf.lightwite.Adapters.MyCustomRecyclerAdapter;
 import com.wtf.lightwite.Adapters.ScanDevsAdapter;
+import com.wtf.lightwite.ConstantsForApp.Constants;
 import com.wtf.lightwite.MainActivity;
 import com.wtf.lightwite.R;
 import com.wtf.lightwite.Threads.ConnectAsClient;
@@ -31,7 +29,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.OnNoteListener,MyCustomRecyclerAdapter.OnPairedListener {
+public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.OnNoteListener,MyCustomRecyclerAdapter.OnPairedListener, Constants {
     MyCustomRecyclerAdapter pairedAdapter;
     Set<BluetoothDevice> pairedList;
     RecyclerView recyclerViewPaired, recyclerViewAvailable;
@@ -39,7 +37,6 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
     private BluetoothAdapter bluetoothAdapter;
     ArrayList<BluetoothDevice> newDevices;
     ScanDevsAdapter adapterAvailableDevices;
-    public static int REQCODE_BTDEV = 1101;
     ConnectAsClient connectAsClient;
 
     public Bluetooth_devices_frag() {
@@ -59,20 +56,20 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
         return view;
     }
 
-    private BroadcastReceiver btDevListener = new BroadcastReceiver() {
+    private final BroadcastReceiver btDevListener = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if(BluetoothDevice.ACTION_FOUND.equals(action)){
-                BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Log.e(LOGTAG,"new dev found "+device.getName());
                 if(device.getBondState()!=BluetoothDevice.BOND_BONDED){
                     if(newDevices.contains(device)){
                         Log.e(LOGTAG, "onReceive: New DEV");
                     }
                     else{newDevices.add(device);
-                    adapterAvailableDevices.notifyDataSetChanged();
+                        adapterAvailableDevices.notifyDataSetChanged();
                     }
                 }
             }
@@ -95,7 +92,7 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
         progressScanDevices = view.findViewById(R.id.scan_dev_progress);
     }
     void initialiseFields(){
-        newDevices = new ArrayList<BluetoothDevice>();
+        newDevices = new ArrayList<>();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         adapterAvailableDevices = new ScanDevsAdapter(newDevices,getContext(),this);
         pairedList = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
@@ -106,10 +103,14 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
         recyclerViewPaired.setAdapter(pairedAdapter);
     }
     private void broadcastRegister() {
-        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        getActivity().registerReceiver(btDevListener,intentFilter);
-        IntentFilter intentFilter1 = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        getActivity().registerReceiver(btDevListener,intentFilter1);
+        try{
+            IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            getActivity().registerReceiver(btDevListener,intentFilter);
+            IntentFilter intentFilter1 = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+            getActivity().registerReceiver(btDevListener,intentFilter1);}
+        catch(NullPointerException e){
+            e.printStackTrace();
+        }
 
     }
     void scanDevices(){
@@ -120,37 +121,42 @@ public class Bluetooth_devices_frag extends Fragment implements ScanDevsAdapter.
         Toast.makeText(getContext(), "Scan Started", Toast.LENGTH_SHORT).show();
     }
     void scanDevFit(){
-    recyclerViewAvailable.setLayoutManager(new LinearLayoutManager(this.getContext()));
-    recyclerViewAvailable.setAdapter(adapterAvailableDevices);
+        recyclerViewAvailable.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerViewAvailable.setAdapter(adapterAvailableDevices);
 
-}
+    }
 
     @Override
     public void onNewClick(int position, BluetoothDevice bt) {
         try {
-            boolean tempboll  = createBond(bt);
+            createBond(bt);
         } catch (Exception e) {
             e.printStackTrace();
         }
         connectAsClient = new ConnectAsClient(bt);
         connectAsClient.start();
-        getActivity().onBackPressed();
+        try{
+            getActivity().onBackPressed();}
+        catch (NullPointerException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void onPairedClick(int position,BluetoothDevice bt) {
+    public void onPairedClick(int position,BluetoothDevice bt){
         MainActivity.connectedtoBt = false;
         connectAsClient = new ConnectAsClient(bt);
         connectAsClient.start();
-        getActivity().onBackPressed();
+        try{
+        getActivity().onBackPressed();}
+        catch(NullPointerException e){e.printStackTrace();}
     }
 
-    public boolean createBond(BluetoothDevice btDevice)
+    public void createBond(BluetoothDevice btDevice)
             throws Exception
     { Class class1 = Class.forName("android.bluetooth.BluetoothDevice");
         Method createBondMethod = class1.getMethod("createBond");
-        Boolean returnValue = (Boolean) createBondMethod.invoke(btDevice);
-        return returnValue.booleanValue();
+        createBondMethod.invoke(btDevice);
     }
 
 

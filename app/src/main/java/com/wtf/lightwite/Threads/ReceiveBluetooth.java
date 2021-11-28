@@ -1,11 +1,10 @@
 package com.wtf.lightwite.Threads;
 
-import static com.wtf.lightwite.ConstantsForApp.Constants.LOGTAG;
-import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_MESSAGE_RECIVED;
 
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
+import com.wtf.lightwite.ConstantsForApp.Constants;
 import com.wtf.lightwite.MainActivity;
 
 import java.io.IOException;
@@ -13,7 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
-public class ReceiveBluetooth extends Thread{
+public class ReceiveBluetooth extends Thread implements Constants {
     BluetoothSocket socket;
     InputStream inputStream;
     OutputStream outputStream;

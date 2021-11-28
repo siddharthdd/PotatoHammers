@@ -1,10 +1,5 @@
 package com.wtf.lightwite.Threads;
 
-import static com.wtf.lightwite.ConstantsForApp.Constants.LOGTAG;
-import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_CONNECTED;
-import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_CONNECTING;
-import static com.wtf.lightwite.ConstantsForApp.Constants.STATE_CONNECTION_FAILED;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -17,14 +12,14 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
-public class ConnectAsClient extends Thread {
+public class ConnectAsClient extends Thread implements Constants{
     BluetoothDevice device;
     BluetoothSocket socket;
     BluetoothAdapter bluetoothAdapter;
     public ConnectAsClient(BluetoothDevice device){
         this.device = device;
         try {
-            socket = device.createRfcommSocketToServiceRecord(UUID.fromString(Constants.UUID_STRING));
+            socket = device.createRfcommSocketToServiceRecord(UUID.fromString(UUID_STRING));
         } catch (IOException e) {
             e.printStackTrace();
         }
