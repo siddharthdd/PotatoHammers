@@ -15,12 +15,13 @@ import java.nio.charset.StandardCharsets;
 public class ReceiveBluetooth extends Thread implements Constants {
     BluetoothSocket socket;
     InputStream inputStream;
+    InputStream inpTemp;
     OutputStream outputStream;
     byte[] buffer;
     int bytes;
     public ReceiveBluetooth(BluetoothSocket socket){
         this.socket = socket;
-        InputStream inpTemp = null;
+       inpTemp = null;
         OutputStream outTemp = null;
         try {
             inpTemp = socket.getInputStream();
@@ -34,13 +35,14 @@ public class ReceiveBluetooth extends Thread implements Constants {
     public void run() {
         buffer = new byte[1024];
             try {
-                bytes = inputStream.read(buffer,0,buffer.length);
+                bytes = inputStream.read(buffer);
                 MainActivity.handler.obtainMessage(STATE_MESSAGE_RECIVED,bytes,-1,buffer).sendToTarget();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
            }
-        public void write(byte[] data){
+           public void write(byte[] data){
             try {
                 outputStream.write(data,0, data.length);
                 String str = new String(data, StandardCharsets.UTF_8);
@@ -49,6 +51,7 @@ public class ReceiveBluetooth extends Thread implements Constants {
                 e.printStackTrace();
             }
         }
+
     // Call this method from the main activity to shut down the connection.
     public void cancel() {
         try {
@@ -57,4 +60,5 @@ public class ReceiveBluetooth extends Thread implements Constants {
             Log.e(LOGTAG, "Could not close the connect socket", e);
         }
     }
+
 }

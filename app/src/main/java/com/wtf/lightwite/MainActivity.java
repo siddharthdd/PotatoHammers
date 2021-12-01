@@ -51,7 +51,6 @@ private final int REQUEST_FINE_LOCATION_PERMSN = 101;
 boolean isFragmentActive =false;
 public static boolean connectedtoBt = false;
 static BluetoothDevice connectedDev ;
-Intent it;
 static ReceiveBluetooth receiveBluetooth;
 static BluetoothSocket btSocket;
 
@@ -199,9 +198,23 @@ static BluetoothSocket btSocket;
             @Override
             public void onClick(View v) {
                 if(btSocket!=null){
-                    ReceiveBluetooth rec = new ReceiveBluetooth(btSocket);
-                receiveBluetooth.write("T".getBytes());
-                rec.start();}
+                        ReceiveBluetooth rec = new ReceiveBluetooth(btSocket);
+                        receiveBluetooth.write("T".getBytes());
+                        try {
+                            Thread.sleep(700);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        rec.start();
+                    ReceiveBluetooth rec2 = new ReceiveBluetooth(btSocket);
+                    receiveBluetooth.write("T".getBytes());
+                    try {
+                        Thread.sleep(700);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    rec2.start();
+                   }
             }
         });
         fan_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -312,11 +325,6 @@ static BluetoothSocket btSocket;
             }
         });
     }
-    public static byte[] floatToByteArray(float value) {
-        int intBits =  Float.floatToIntBits(value);
-        return new byte[] {
-                (byte) (intBits >> 24), (byte) (intBits >> 16), (byte) (intBits >> 8), (byte) (intBits) };
-    }
     public  static Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
@@ -349,7 +357,8 @@ static BluetoothSocket btSocket;
                 case STATE_CLOSED:
                     break;
                 case STATE_MESSAGE_RECIVED:
-                    tempreature_disp.setText(new String((byte[]) msg.obj));
+                    tempreature_disp.setText((new String((byte[]) msg.obj)+" °C"));
+                    tempreature_disp.setVisibility(View.VISIBLE);
                     break;
             }
             return true;
