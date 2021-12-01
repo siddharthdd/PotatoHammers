@@ -9,6 +9,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -94,6 +98,14 @@ static BluetoothSocket btSocket;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main_activity,menu);
+        if(context.getResources().getString(R.string.mode).equals("Day")){
+        menu.getItem(0).getIcon().setColorFilter(Color.argb(255,0,0,0), PorterDuff.Mode.MULTIPLY);
+        menu.getItem(1).getIcon().setColorFilter(Color.argb(255,0,0,0),PorterDuff.Mode.MULTIPLY);
+        }
+        if(context.getResources().getString(R.string.mode).equals("Night")){
+            menu.getItem(0).getIcon().setColorFilter(Color.argb(255,255,255,255), PorterDuff.Mode.MULTIPLY);
+            menu.getItem(1).getIcon().setColorFilter(Color.argb(255,255,255,255),PorterDuff.Mode.MULTIPLY);
+        }
         return super.onCreateOptionsMenu(menu);
 
     }

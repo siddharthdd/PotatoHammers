@@ -4,21 +4,27 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ThemedSpinnerAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.wtf.lightwite.ConstantsForApp.Constants;
 import com.wtf.lightwite.R;
 
 import java.util.ArrayList;
 import java.util.Set;
 
-public class MyCustomRecyclerAdapter extends RecyclerView.Adapter<MyCustomRecyclerAdapter.viewHolder>{
+public class MyCustomRecyclerAdapter extends RecyclerView.Adapter<MyCustomRecyclerAdapter.viewHolder> implements Constants {
     Set<BluetoothDevice> list;
     ArrayList<BluetoothDevice> btList;
     Context context;
@@ -49,16 +55,32 @@ public class MyCustomRecyclerAdapter extends RecyclerView.Adapter<MyCustomRecycl
         //Set the Text and Shit
         int Btclass = device.getBluetoothClass().getDeviceClass();
         if(Btclass== BluetoothClass.Device.AUDIO_VIDEO_HEADPHONES || Btclass == BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET){
-            icon.setImageResource(android.R.drawable.stat_sys_headset);
+            icon.setImageResource(R.drawable.headfone1_w);
         }
         else if(Btclass == BluetoothClass.Device.PHONE_SMART || Btclass == BluetoothClass.Device.PHONE_UNCATEGORIZED)
-            icon.setImageResource(android.R.drawable.stat_sys_vp_phone_call);
+            icon.setImageResource(R.drawable.phone1_w);
         else if(Btclass == BluetoothClass.Device.COMPUTER_DESKTOP || Btclass == BluetoothClass.Device.COMPUTER_LAPTOP || Btclass == BluetoothClass.Device.COMPUTER_SERVER)
-            icon.setImageResource(android.R.drawable.checkbox_off_background);
+            icon.setImageResource(R.drawable.top1_w);
         else {
-            icon.setImageResource(android.R.drawable.checkbox_on_background);
+            icon.setImageResource(android.R.drawable.stat_sys_data_bluetooth);
         }
+        darkMode();
 
+    }
+    public boolean darkMode(){
+        Resources resources = context.getResources();
+        if(resources.getString(R.string.mode).equals("Day"))
+        {
+            icon.setColorFilter(Color.argb(255,0,0,0));
+            icon.setImageTintList(ColorStateList.valueOf(Color.argb(255,0,0,0)));
+            return false;
+        }
+        if(resources.getString(R.string.mode).equals("Night"))
+        {
+            icon.setColorFilter(Color.argb(255,0,0,0));
+            return  true;
+        }
+        return true;
     }
 
     @Override

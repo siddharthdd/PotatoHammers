@@ -30,7 +30,7 @@
         <item name="android:layout_width">50dp</item>
     </style>
 <style name="toggleGrp" parent="Widget.MaterialComponents.Button.OutlinedButton">
-    <item name="backgroundTint">#EFF0F1</item>
+    <item name="backgroundTint">#3D3E5A</item>
     <item name="strokeWidth">1.5dp</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_width">wrap_content</item>
@@ -83,4 +83,5 @@
     <style name="LayoutCard">
         <item name="android:background">@drawable/dark_grad</item>
     </style>
+    <string name="mode">Night</string>
 </resources>

@@ -5,6 +5,7 @@
     android:id="@+id/menu_search_devices"
     android:title="Search Devices"
     android:icon="@drawable/ic_bluetooth_search"
+
     app:showAsAction="always"/>
     <item
         android:id="@+id/menu_bluetooth"
