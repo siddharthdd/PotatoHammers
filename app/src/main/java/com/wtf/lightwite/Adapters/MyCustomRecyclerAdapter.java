@@ -4,16 +4,11 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ThemedSpinnerAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -64,24 +59,9 @@ public class MyCustomRecyclerAdapter extends RecyclerView.Adapter<MyCustomRecycl
         else {
             icon.setImageResource(android.R.drawable.stat_sys_data_bluetooth);
         }
-        darkMode();
 
     }
-    public boolean darkMode(){
-        Resources resources = context.getResources();
-        if(resources.getString(R.string.mode).equals("Day"))
-        {
-            icon.setColorFilter(Color.argb(255,0,0,0));
-            icon.setImageTintList(ColorStateList.valueOf(Color.argb(255,0,0,0)));
-            return false;
-        }
-        if(resources.getString(R.string.mode).equals("Night"))
-        {
-            icon.setColorFilter(Color.argb(255,0,0,0));
-            return  true;
-        }
-        return true;
-    }
+
 
     @Override
     public int getItemCount() {

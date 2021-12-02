@@ -3,7 +3,7 @@
     <style name="Theme.LightWite" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">#D09999</item>
-        <item name="android:windowBackground">#DDC9C9</item>
+        <item name="android:windowBackground">@drawable/light_bg</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="actionBarSize">40dp</item>
@@ -41,23 +41,24 @@
     <style name="iconImageBulb" parent="Widget.MaterialComponents.TimePicker.ImageButton">
         <item name="android:layout_margin">5dp</item>
         <item name="tint">#FFC800</item>
-        <item name="android:layout_height">50dp</item>
-        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_width">60dp</item>
     </style>
     <style name="iconImageFen" parent="Widget.MaterialComponents.TimePicker.ImageButton">
         <item name="android:layout_margin">5dp</item>
         <item name="tint">#4FBB6B</item>
-        <item name="android:layout_height">50dp</item>
-        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_width">60dp</item>
     </style>
     <style name="iconImageTemp" parent="Widget.MaterialComponents.TimePicker.ImageButton">
         <item name="android:layout_margin">5dp</item>
         <item name="tint">#F96363</item>
-        <item name="android:layout_height">50dp</item>
-        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_width">60dp</item>
     </style>
     <style name="toggleGrp" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="backgroundTint">#F1ECEE</item>
+        <item name="strokeWidth">2.5dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="cornerRadius">12dp</item>
@@ -91,6 +92,9 @@
     </style>
     <style name="LayoutCard">
         <item name="android:background">@drawable/light_gradient</item>
+    </style>
+    <style name="iconImageDevice" parent="Widget.MaterialComponents.TimePicker.ImageButton">
+        <item name="tint">#000000</item>
     </style>
     <string name="mode">Day</string>
 

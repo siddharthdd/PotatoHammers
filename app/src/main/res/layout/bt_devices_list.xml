@@ -9,6 +9,8 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_margin="5dp"
+        style="@style/iconImageDevice"
+        tools:src="@drawable/top1_w"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
     <TextView
