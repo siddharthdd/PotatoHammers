@@ -43,12 +43,14 @@ public class ScanDevsAdapter extends RecyclerView.Adapter<ScanDevsAdapter.viewHo
         //Set the Text and Shit
         int Btclass = device.getBluetoothClass().getDeviceClass();
         if(Btclass== BluetoothClass.Device.AUDIO_VIDEO_HEADPHONES || Btclass == BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET){
-            icon.setImageResource(android.R.drawable.stat_sys_headset);
+            icon.setImageResource(R.drawable.headfone1_w);
         }
         else if(Btclass == BluetoothClass.Device.PHONE_SMART || Btclass == BluetoothClass.Device.PHONE_UNCATEGORIZED)
-            icon.setImageResource(android.R.drawable.stat_sys_vp_phone_call);
+            icon.setImageResource(R.drawable.phone1_w);
+        else if(Btclass == BluetoothClass.Device.COMPUTER_DESKTOP || Btclass == BluetoothClass.Device.COMPUTER_LAPTOP || Btclass == BluetoothClass.Device.COMPUTER_SERVER)
+            icon.setImageResource(R.drawable.top1_w);
         else {
-            icon.setImageResource(android.R.drawable.checkbox_on_background);
+            icon.setImageResource(android.R.drawable.stat_sys_data_bluetooth);
         }
 
     }
