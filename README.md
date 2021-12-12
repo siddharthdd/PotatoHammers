@@ -1,5 +1,6 @@
+
  <img src="https://github.com/siddharthdd/PotatoHammers/blob/main/app/src/main/res/drawable-v24/app_logo.png" alt="App Logo" width="60" height="60"/>
- #  Welcome to 'Leट K' Repository
+#  Welcome to 'Leट K' Repository
 
 This is source code for a **Home Automation App** which controls home appliances using Bluetooth module.
 
