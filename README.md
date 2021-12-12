@@ -6,7 +6,7 @@ This is source code for a **Home Automation App** which controls home appliances
 
 You can Directly Install apk from [releases](https://github.com/siddharthdd/PotatoHammers/releases) or You can clone the repository in Android Studio or download and extract the zip and open the folder as project and build or test apk from there
 
-##  APPARATUS
+##  Hardware Components
 
 Used **Bluetooth Module (HC- 05)** and **Temperature Sensor** with **Arduino UNO** and 3 bulbs and 3 fans as a prototype.
 
